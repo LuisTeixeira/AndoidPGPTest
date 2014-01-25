@@ -50,7 +50,7 @@ public class KeyHelper {
 	    PGPPublicKey key = null;
 	    while (keys.hasNext()) {
 	        key = (PGPPublicKey)keys.next();
-	        if (key.isEncryptionKey()) {
+	        if ( key.isEncryptionKey() ) {
 	            return key;
 	        }
 	    }

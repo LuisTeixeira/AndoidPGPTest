@@ -35,7 +35,7 @@ public class MainActivity extends Activity {
 		// read a public key from a file
 		PGPPublicKeyRing keyRing;
 		try {
-			keyRing = KeyHelper.getKeyring(getAssets().open("keys.asc"));
+			keyRing = KeyHelper.getKeyring(getAssets().open("publickey.gpg"));
 			// read a public key from that keyring
 			publicKey = KeyHelper.getEncryptionKey(keyRing);
 		} catch (IOException e) {

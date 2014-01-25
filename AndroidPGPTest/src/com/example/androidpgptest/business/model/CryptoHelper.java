@@ -11,7 +11,7 @@ import java.util.Date;
  
 public class CryptoHelper {
  
-    private static final String BC_PROVIDER_NAME = "BC";
+    private static final String BC_PROVIDER_NAME = "SC";
  
     // pick some sensible encryption buffer size
     private static final int BUFFER_SIZE = 4096;
@@ -35,13 +35,13 @@ public class CryptoHelper {
         this.armoredOutputStream = new ArmoredOutputStream(out);
  
         // create an encrypted payload and set the public key on the data generator
-        PGPEncryptedDataGenerator encryptGen = new PGPEncryptedDataGenerator(PAYLOAD_ENCRYPTION_ALG,
+        PGPEncryptedDataGenerator encryptGen = new PGPEncryptedDataGenerator(PAYLOAD_ENCRYPTION_ALG,true,
                                                               new SecureRandom(), BC_PROVIDER_NAME);
         encryptGen.addMethod(key);
  
         // open an output stream connected to the encrypted data generator
         // and have the generator write its data out to the ascii-encoding stream
-        byte[] buffer = new byte[16384];
+        byte[] buffer = new byte[BUFFER_SIZE];
         this.encryptedOut = encryptGen.open(armoredOutputStream, buffer);
  
         // compress data.  we are building layers of output streams.  we want to compress here

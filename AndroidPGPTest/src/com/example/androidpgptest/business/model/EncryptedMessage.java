@@ -2,6 +2,7 @@ package com.example.androidpgptest.business.model;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.security.NoSuchProviderException;
 
 import org.spongycastle.openpgp.PGPException;
@@ -13,7 +14,7 @@ public class EncryptedMessage extends BasicMessage implements Message {
 
 	public EncryptedMessage(User sender, PGPPublicKey publicKey) {
 		super(sender);
-		
+		this.publicKey = publicKey;
 	}
 	
 	@Override
@@ -34,6 +35,9 @@ public class EncryptedMessage extends BasicMessage implements Message {
 		CryptoHelper util;
 		try {
 			util = new CryptoHelper(publicKey, "secrets.txt", encryptedStream);
+			PrintWriter pw = new PrintWriter(util.getPayloadOutputStream());
+			pw.print(content);
+			pw.flush();
 			
 			util.close();
 			

@@ -76,7 +76,7 @@ public class MainActivity extends Activity {
 				Log.d("ButtonListener", "Button " + v.getId() + " clicked");
 				
 				EncryptedMessage msg = new EncryptedMessage(new User("test@test.com"), publicKey);
-				msg.setContent(decryptedTextET.toString());
+				msg.setContent(decryptedTextET.getText().toString());
 				encryptedTextET.setText(msg.getContent());
 			}
 		});

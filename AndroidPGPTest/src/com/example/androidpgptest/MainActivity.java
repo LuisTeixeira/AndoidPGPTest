@@ -1,7 +1,16 @@
 package com.example.androidpgptest;
 
-import android.os.Bundle;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+import org.spongycastle.openpgp.PGPPublicKey;
+import org.spongycastle.openpgp.PGPPublicKeyRing;
+
+import com.example.androidpgptest.business.model.EncryptedMessage;
+import com.example.androidpgptest.business.model.User;
+
 import android.app.Activity;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -14,11 +23,29 @@ public class MainActivity extends Activity {
 	private EditText encryptedTextET;
 	private Button encryptButton;
 	private Button decryptButton;
-
+	
+	private PGPPublicKey publicKey;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		
+		
+		// read a public key from a file
+		PGPPublicKeyRing keyRing;
+		try {
+			keyRing = KeyHelper.getKeyring(getAssets().open("publickey.gpg"));
+			// read a public key from that keyring
+			publicKey = KeyHelper.getEncryptionKey(keyRing);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		 
+		System.out.println("Public Key: " + publicKey);
+		System.out.println(" ID: " + publicKey.getKeyID());
+		
 		
 		instantiateLayoutElements();
 		registerButtonListeners();
@@ -48,6 +75,9 @@ public class MainActivity extends Activity {
 			public void onClick(View v) {
 				Log.d("ButtonListener", "Button " + v.getId() + " clicked");
 				
+				EncryptedMessage msg = new EncryptedMessage(new User("test@test.com"), publicKey);
+				msg.setContent(decryptedTextET.toString());
+				encryptedTextET.setText(msg.getContent());
 			}
 		});
 		

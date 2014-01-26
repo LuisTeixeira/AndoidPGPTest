@@ -9,7 +9,7 @@ import java.security.NoSuchProviderException;
 import java.security.SecureRandom;
 import java.util.Date;
  
-public class CryptoHelper {
+public class EncryptionHelper {
  
     private static final String BC_PROVIDER_NAME = "SC";
  
@@ -28,7 +28,7 @@ public class CryptoHelper {
     private final OutputStream compressedOut;
     private final OutputStream literalOut;
  
-    public CryptoHelper(PGPPublicKey key, String payloadFilename, OutputStream out) throws PGPException, NoSuchProviderException, IOException {
+    public EncryptionHelper(PGPPublicKey key, String payloadFilename, OutputStream out) throws PGPException, NoSuchProviderException, IOException {
  
         // write data out using "ascii-armor" encoding.  This is the
         // normal PGP text output.

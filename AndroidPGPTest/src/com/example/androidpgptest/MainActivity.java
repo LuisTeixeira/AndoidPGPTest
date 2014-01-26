@@ -2,9 +2,13 @@ package com.example.androidpgptest;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.security.PrivateKey;
 
+import org.spongycastle.openpgp.PGPPrivateKey;
 import org.spongycastle.openpgp.PGPPublicKey;
 import org.spongycastle.openpgp.PGPPublicKeyRing;
+import org.spongycastle.openpgp.PGPSecretKey;
+import org.spongycastle.openpgp.PGPSecretKeyRing;
 
 import com.example.androidpgptest.business.model.EncryptedMessage;
 import com.example.androidpgptest.business.model.User;
@@ -25,27 +29,37 @@ public class MainActivity extends Activity {
 	private Button decryptButton;
 	
 	private PGPPublicKey publicKey;
+	private PGPPrivateKey privateKey;
+	
+	private EncryptedMessage message;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		
-		
-		// read a public key from a file
-		PGPPublicKeyRing keyRing;
+		// read keyrings from file
 		try {
-			keyRing = KeyHelper.getKeyring(getAssets().open("publickey.gpg"));
+			PGPPublicKeyRing publicKeyRing = KeyHelper.getPublicKeyring(getAssets().open("publickeyring.gpg"));
 			// read a public key from that keyring
-			publicKey = KeyHelper.getEncryptionKey(keyRing);
-		} catch (IOException e) {
+			publicKey = KeyHelper.getEncryptionKey(publicKeyRing);
+			
+			//PGPSecretKeyRing privateKeyRing = KeyHelper.getSecretKeyring(getAssets().open("secretkeyring.gpg"));
+			//privateKey = KeyHelper.getDecryptionKey(privateKeyRing);
+			
+			message = new EncryptedMessage(new User("test@test.com"), publicKey, getAssets().open("secretkeyring.gpg"));
+			
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		
 		 
 		System.out.println("Public Key: " + publicKey);
 		System.out.println(" ID: " + publicKey.getKeyID());
-		
+		//System.out.println("Private Key: " + privateKey);
+		//System.out.println(" ID: " + privateKey.getKeyID());
 		
 		instantiateLayoutElements();
 		registerButtonListeners();
@@ -74,10 +88,10 @@ public class MainActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				Log.d("ButtonListener", "Button " + v.getId() + " clicked");
-				
-				EncryptedMessage msg = new EncryptedMessage(new User("test@test.com"), publicKey);
-				msg.setContent(decryptedTextET.getText().toString());
-				encryptedTextET.setText(msg.getContent());
+								
+				message.setContent(decryptedTextET.getText().toString());
+				encryptedTextET.setText(message.getEncryptedContent());
+				decryptedTextET.setText("");
 			}
 		});
 		
@@ -86,6 +100,9 @@ public class MainActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				Log.d("ButtonListener", "Button " + v.getId() + " clicked");
+
+				decryptedTextET.setText(message.getContent());
+				encryptedTextET.setText("");
 			}
 		});
 	}
